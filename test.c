@@ -4,14 +4,14 @@
 #include <stdlib.h>
 #include "key.h"
 
-char data0[10] = {
+unsigned char data0[10] = {
     0x1,0x2,0x3,0x4,0x5,0x6,0x7,0x8,0x9,0x10,
 };
-char data1[10] = {
+unsigned char data1[10] = {
     0x1,0x1,0x1,0x1
 };
 
-void print_array(unsigned char title[], unsigned char data[], unsigned int len)
+void print_array(const char title[], unsigned char data[], unsigned int len)
 {
     int i;
 
@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
     int j, r, key_num;
     unsigned int sync = 0;
     unsigned char key[MAX_KEY_REQUEST];
-    char buf[120] = { 0 };
+    unsigned char buf[120] = { 0 };
     unsigned int mykeygen;
 
 #if 1
@@ -45,11 +45,11 @@ int main(int argc, char *argv[])
 #endif
 
     printf("\n--------------采用自定义的keygen、同步码开始加密----------------\n");
-    set_keygen(mykeygen);
+    set_keygen(sync, mykeygen);
     print_array("\n明文:", data0, key_num);
 
     memset(key, 0, sizeof(key));
-    len = request_key(sync, key_num, key);
+    len = request_key(key_num, key);
 
     print_array("密钥:", key, len);
 
@@ -61,10 +61,10 @@ int main(int argc, char *argv[])
     print_array("\n密文:", buf, len);
 
     printf("\n--------------------开始解密--------------------\n");
-    set_keygen(mykeygen);
+    set_keygen(sync, mykeygen);
 
     memset(key, 0, sizeof(key));
-    len = request_key(sync, key_num, key);
+    len = request_key(key_num, key);
 
     for(i = 0;i < len;i++)
     {
@@ -79,28 +79,28 @@ int main(int argc, char *argv[])
 
 #if 0
     printf("\n--------------采用默认keygen 同步码=0 产生密文----------------\n");
-    reset_keygen();
+    reset_keygen(sync);
 
     memset(key, 0, sizeof(key));
-    len = request_key(sync, key_num, key);
+    len = request_key(key_num, key);
 
     print_array("密钥0-9:", key, len);
 
     memset(key, 0, sizeof(key));
-    len = request_key(sync, key_num, key);
+    len = request_key(key_num, key);
 
     print_array("密钥10-19:", key, len);
 
     printf("\n--------------采用keygen=1234 同步码=0 产生密文----------------\n");
-    set_keygen(1234);
+    set_keygen(sync, 1234);
 
     memset(key, 0, sizeof(key));
-    len = request_key(sync, key_num, key);
+    len = request_key(key_num, key);
 
     print_array("密钥0-9:", key, len);
 
     memset(key, 0, sizeof(key));
-    len = request_key(sync, key_num, key);
+    len = request_key(key_num, key);
 
     print_array("密钥10-19:", key, len);
 
@@ -119,11 +119,11 @@ int main(int argc, char *argv[])
 #endif
 
     printf("\n--------------采用默认keygen开始加密----------------\n");
-    reset_keygen();
+    reset_keygen(sync);
     print_array("\n明文:", data0, 10);
 
     memset(key, 0, sizeof(key));
-    len = request_key(sync, 10, key);
+    len = request_key(10, key);
 
     print_array("密钥:", key, len);
 
@@ -135,10 +135,10 @@ int main(int argc, char *argv[])
     print_array("\n密文:", buf, len);
 
     printf("\n--------------------开始解密--------------------\n");
-    reset_keygen();
+    reset_keygen(sync);
 
     memset(key, 0, sizeof(key));
-    len = request_key(sync, 10, key);
+    len = request_key(10, key);
 
     for(i = 0;i < len;i++)
     {
